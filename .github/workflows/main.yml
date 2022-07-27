@@ -1,8 +1,9 @@
-name: Publish former2.com
+name: Publish to S3
 
 on:
   push:
-    branches: [ master ]
+    tags:
+      - 'v*'
 
 jobs:
   deploy:
@@ -16,10 +17,11 @@ jobs:
     - name: Configure AWS creds
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.FORMER2_AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.FORMER2_AWS_SECRET_ACCESS_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Copy files to origin S3 bucket
+    - name: Sync files to origin S3 bucket
       run: |
-        aws s3 cp --cache-control max-age=300 --recursive . s3://former2.com/ --exclude ".git/*" --exclude "cli/*" --exclude ".*" --exclude "notes.txt" --exclude "*.md" --exclude "Dockerfile" --exclude "LICENSE" --exclude "*.yml" --exclude ".gitignore" --exclude "util/*" --exclude "lib/*"
+        aws s3 sync --delete --cache-control max-age=300 --recursive . s3://${{ secrets.AWS_S3_BUCKET }}/ --exclude ".git/*" --exclude "cli/*" --exclude ".*" --exclude "notes.txt" --exclude "*.md" --exclude "Dockerfile" --exclude "LICENSE" --exclude "*.yml" --exclude ".gitignore" --exclude "util/*" --exclude "lib/*" && \
+        aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
