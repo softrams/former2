@@ -1,5 +1,5 @@
-var CHROME_HELPER_EXTENSION_ID = "fhejmeojlbhfhjndnkkleooeejklmigi"; // Chrome
-var EDGE_HELPER_EXTENSION_ID = "okkjnfohglnomdbpimkcdkiojbeiedof"; // Edge
+var CHROME_HELPER_EXTENSION_ID = "nlppkjlljfnedbgonnbhohibflmjcdeb"; // Chrome
+var EDGE_HELPER_EXTENSION_ID = "mhnplpbhpkhgijgmdcojpnhamnnlkdna"; // Edge
 var extension_available = false;
 var region = 'us-east-1';
 var output_objects = [];
@@ -83,7 +83,7 @@ $(document).ready(function(){
         `;
 
         $('#templated-section-container').append(html);
-        
+
         Object.keys(section.resourcetypes).forEach(resourcetype => {
             $(`#section-${navlower(section.category)}-${navlower(section.service)}-${navlower(resourcetype)}-datatable`).on('refresh.bs.table', window[`updateDatatable${nav(section.category)}${nav(section.service)}`]);
         });
@@ -129,7 +129,7 @@ $(document).ready(function(){
                     if (relation['EmbeddedPropertyName'] && typeof propertyvalue == "object") {
                         propertyvalue = propertyvalue[relation['EmbeddedPropertyName']];
                     }
-    
+
                     if (Array.isArray(propertyvalue)) {
                         propertyvalue.forEach(propertyvalueitem => {
                             propertyvalues.push(propertyvalueitem);
@@ -179,13 +179,13 @@ $(document).ready(function(){
                     'region': checkobjectrow.f2region,
                     'datatableid': datatableid
                 });
-    
+
                 return checkobjectrow.f2id;
             });
         });
         mapped_check_objects = performF2Mappings(check_objects);
         check_objects = [];
-        
+
         mapped_check_objects.forEach(obj => {
             rows.forEach(row => {
                 // looks for relationships from the row to the check objects
@@ -367,7 +367,7 @@ $(document).ready(function(){
         $("#add-related-selectall").off('click').on('click', function(){
             $(".related-check").prop("checked",$("#add-related-selectall").is(":checked"));
         });
-        
+
         $('#related-add-selected-button').off('click').on('click', function(){
             $('.related-check').each(function(i){
                 var check_element = $(this);
@@ -401,9 +401,9 @@ $(document).ready(function(){
                     });
                 }
             });
-        
+
             $('#relatedmodal').modal('hide');
-        
+
             $('#generate-outputs').text("Generate (" + output_objects.length + ")");
             $('#generate-outputs').removeAttr('disabled');
         });
@@ -418,7 +418,7 @@ $(document).ready(function(){
                 }
             });
             if (exists) return null;
-            
+
             output_objects.push({
                 'id': row.f2id,
                 'type': row.f2type,
@@ -542,7 +542,7 @@ $(document).ready(function(){
 
         $(this).closest(".table-responsive").find(".f2datatable").bootstrapTable('uncheckAll');
         $(this).closest(".table-responsive").find(".f2datatable tr.selected").removeClass('selected');
-        
+
         $(this).prop('disabled', true);
     });
 
@@ -577,7 +577,7 @@ $(document).ready(function(){
                 rows.forEach(row => {
                     var searchterm = $('#search-input').val();
                     var jsonrow = JSON.stringify(row);
-                    
+
                     if (searchterm.includes(",")) {
                         searchterm.split(",").forEach(searchterminst => {
                             if (jsonrow.includes(searchterminst)) {
@@ -741,13 +741,13 @@ $(document).ready(function(){
             $('#header-breadcrumb').attr('style', '');
 
             window.scrollTo({ top: 0 });
-            
+
             $('#header-button-clear-outputs').attr('style', 'margin-left: 16px; display: none;');
             if (location.hash == "#section-outputs-cloudformation") {
                 $('#header-button-copy-cfn').attr('style', '');
                 $('#header-button-import-cfn').attr('style', 'margin-left: 16px;');
                 $('#header-button-clear-outputs').attr('style', 'margin-left: 16px;');
-                
+
                 setTimeout(function(){
                     cfn_editor.refresh();
                     tippy('.f2replacementmarker', {
@@ -916,7 +916,7 @@ $(document).ready(function(){
             // Gutters
             [
                 {key: 'cfn', editor: cfn_editor},
-                {key: 'tf', editor: tf_editor}, 
+                {key: 'tf', editor: tf_editor},
                 {key: 'troposphere', editor: troposphere_editor},
                 {key: 'cdk', editor: cdk_editor},
                 {key: 'cdkv2', editor: cdkv2_editor},
@@ -998,7 +998,7 @@ $(document).ready(function(){
             }
         }
     });
-    
+
     var storedregion = window.localStorage.getItem('region');
     if (storedregion) {
         region = storedregion;
@@ -1251,7 +1251,7 @@ $(document).ready(function(){
                                 } else if (prop == "Credentials") {
                                     return AWSCredentialsClass;
                                 }
-                                
+
                                 return function (service_params) {
                                     return new Proxy({
                                         'name': prop,
@@ -1298,9 +1298,9 @@ $(document).ready(function(){
             );
         });
     };
-    
+
     pingExtension().catch(() => {
-        ping_extension_interval = setInterval(function(){ // continuously check for extension being present after 
+        ping_extension_interval = setInterval(function(){ // continuously check for extension being present after
             pingExtension().then(() => {
                 clearInterval(ping_extension_interval);
                 updateIdentity();
@@ -1338,7 +1338,7 @@ $(document).ready(function(){
         $('#import-button').off('click').on('click', function() {
             $('#import-button').attr('disabled', 'disabled');
             $('#import-button').text("Creating change set...");
-            
+
             importResources($('#import-stackname').val(), $('#import-deletionpolicy').val());
         });
 
@@ -1360,7 +1360,7 @@ $(document).ready(function(){
     /* ========================================================================== */
     // Diagram
     /* ========================================================================== */
-    
+
     var sectionHeader = $('.section-header');
     var sectionHeaderHeight = 0;
     if (sectionHeader.length) {
@@ -1386,9 +1386,9 @@ $(document).ready(function(){
             action: 'export',
             format: 'png'
         });
-    
-        var iframe = document.getElementById('diagramframe');  
-        iframe.contentWindow.postMessage(message, '*');    
+
+        var iframe = document.getElementById('diagramframe');
+        iframe.contentWindow.postMessage(message, '*');
     });
 
     window.addEventListener('message', (message) => {
@@ -1493,7 +1493,7 @@ $(document).ready(function(){
 
         generateParameterTable();
     });
-    
+
     var spacingamount = window.localStorage.getItem('cfnspacing');
     if (spacingamount && spacingamount == 2) {
         cfnspacing = "  ";
@@ -1684,7 +1684,7 @@ async function getResourceTags(arn) {
 
     if (!resource_tag_cache[ service/*+ "." + type*/ ]) {
         resource_tag_cache[service] = "PENDING";
-        
+
         await sdkcall("ResourceGroupsTaggingAPI", "getResources", {
             ResourceTypeFilters: [ service/* + "." + type*/ ]
         }, false).then((data) => {
@@ -1960,7 +1960,7 @@ function updateIdentity() {
     });
 }
 
-/* 
+/*
     Detect resource stack association
 */
 
@@ -4756,7 +4756,7 @@ async function downloadImportTemplate(stack_name, deletion_policy) {
     });
 
     mapped_cfn_output += compileOutputs(importable_resources, deletion_policy)['cfn'];
-    
+
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(mapped_cfn_output));
     element.setAttribute('download', stack_name + ".yaml");
@@ -4789,7 +4789,7 @@ async function importResources(stack_name, deletion_policy) {
     });
 
     var mapped_cfn_output = compileOutputs(importable_resources, deletion_policy)['cfn'];
-    
+
     if (mapped_cfn_output.length > 51200) {
         $('#import-button').removeAttr('disabled');
         $('#import-button').text("Create Change Set");
@@ -4835,7 +4835,7 @@ async function importResources(stack_name, deletion_policy) {
             $('#import-button').attr('disabled', 'disabled');
             $('#import-button').text("Executing change set...");
             var crt = (new Date()).getTime().toString();
-            
+
             sdkcall("CloudFormation", "executeChangeSet", {
                 ChangeSetName: changeSetName,
                 StackName: stack_name,
