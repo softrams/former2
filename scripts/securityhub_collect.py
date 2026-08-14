@@ -9,6 +9,7 @@ secrets are never written to the output.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from datetime import datetime, timezone
@@ -37,7 +38,26 @@ def _finding_key(finding: dict[str, Any], account_id: str, region: str) -> str:
     product = _value(
         finding.get("ProductFields", {}), "aws/securityhub/ProductName", default=""
     )
-    return "|".join((account_id, region, str(product), str(finding.get("Id", ""))))
+    identity = {
+        "account_id": account_id,
+        "region": region,
+        "product": product,
+        "id": finding.get("Id", ""),
+    }
+    encoded = json.dumps(
+        identity, sort_keys=True, separators=(",", ":"), default=str
+    ).encode()
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _recommendation_text(finding: dict[str, Any]) -> Any:
+    remediation = finding.get("Remediation")
+    if not isinstance(remediation, dict):
+        return None
+    recommendation = remediation.get("Recommendation")
+    if not isinstance(recommendation, dict):
+        return None
+    return recommendation.get("Text")
 
 
 def normalize_finding(
@@ -58,9 +78,7 @@ def normalize_finding(
         ),
         "title": finding.get("Title"),
         "description": finding.get("Description"),
-        "remediation": finding.get("Remediation", {})
-        .get("Recommendation", {})
-        .get("Text"),
+        "remediation": _recommendation_text(finding),
         "severity": str(severity).upper(),
         "status": str(workflow).upper(),
         "compliance": finding.get("Compliance", {}),
